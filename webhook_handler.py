@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-
+from pull_request_getter import get_pull_request
+ACCESS_TOKEN = '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'
 app = Flask(__name__)
 
 @app.route('/webhook', methods=['POST'])
@@ -42,6 +43,7 @@ def handle_webhook():
             # Additional API request to retrieve the commits data
             # using the `commits_url` if needed
             print(commits_url)
+            get_pull_request(pull_request_url, ACCESS_TOKEN)
             return jsonify({'status': 'success'}), 200       
         
         else:
