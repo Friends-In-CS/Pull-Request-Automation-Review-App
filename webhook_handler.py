@@ -23,31 +23,25 @@ def handle_webhook():
             pull_request_body = data['pull_request']['body']
             pull_request_url = data['pull_request']['html_url']
             # Extract the repository name
-            print(f"Pull request opened for repository: {repository_name}")
+            #print(f"Pull request opened for repository: {repository_name}")
             # Extract the repository number
-            print(f"Pull request number: {pull_request_number}")
+            #print(f"Pull request number: {pull_request_number}")
             # Extract the repository title
-            print(f"Pull request title: {pull_request_title}")
+            #print(f"Pull request title: {pull_request_title}")
             # Extract the pull request body
-            print(f"Pull request body:")
-            print()
-            print(pull_request_body)
-            print()
+            #print(f"Pull request body:")
+            #print(pull_request_body)
             # Extract the pull request url
-            print(f"Pull request URL: {pull_request_url}")
+            #print(f"Pull request URL: {pull_request_url}")
             
             # Extract the changed files
             changed_files = data['pull_request']['changed_files']
-            print()
-            print(f"Number of changed files: {changed_files}")
-            print()
+            #print(f"Number of changed files: {changed_files}")
             # Extract the commits
             commits_url = data['pull_request']['commits_url']
             # Additional API request to retrieve the commits data
             # using the `commits_url` if needed
-            print()
-            print(commits_url)
-            print()
+            #print(commits_url)
             return jsonify({'status': 'success'}), 200       
         
         else:
