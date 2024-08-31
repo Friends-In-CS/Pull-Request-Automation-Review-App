@@ -83,4 +83,4 @@ if __name__ == '__main__':
 
 
 ## COMMANDS TO RUN IN TERMINAL
-## flask --app /Users/cise7/Desktop/Pull-Request-Bot/Pull-Request-Automation-Review-App/webhook_handler.py run -p 3000
+## flask --app webhook_handler  run -p 3000
