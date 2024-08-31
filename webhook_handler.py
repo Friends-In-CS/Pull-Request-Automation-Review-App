@@ -17,8 +17,8 @@ with open(PRIV_KEY_PATH, 'r') as file:
 
 def generate_jwt_token():
     payload = {
-        'iat': datetime.datetime.now(datetime.UTC),
-        'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=10),
+        'iat': datetime.datetime.utcnow(),
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10),
         'iss': APP_ID
     }
     jwt_token = jwt.encode(payload, private_key, algorithm='RS256')
