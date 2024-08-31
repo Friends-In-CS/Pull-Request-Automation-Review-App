@@ -22,7 +22,7 @@ def handle_webhook():
             pull_request_number = data['pull_request']['number']
             pull_request_title = data['pull_request']['title']
             pull_request_body = data['pull_request']['body']
-            pull_request_url = data['pull_request']['html_url']
+            pull_request_url = data['pull_request']['url']
             # Extract the repository name
             #print(f"Pull request opened for repository: {repository_name}")
             # Extract the repository number
@@ -43,7 +43,8 @@ def handle_webhook():
             # Additional API request to retrieve the commits data
             # using the `commits_url` if needed
             print(commits_url)
-            get_pull_request(pull_request_url, ACCESS_TOKEN)
+            result = get_pull_request(pull_request_url, ACCESS_TOKEN)
+            print(result)
             return jsonify({'status': 'success'}), 200       
         
         else:
