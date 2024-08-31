@@ -1,7 +1,52 @@
+import os
+import datetime
+import requests
+import jwt
 from flask import Flask, request, jsonify
 from pull_request_getter import get_pull_request
-ACCESS_TOKEN = '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'
+APP_ID = os.environ.get('APP_ID')
+PRIV_KEY_PATH = os.environ.get('PRIVATE_KEY_PATH')
+#INSTALLATION_ID = os.environ.get('GITHUB_INSTALLATION_ID')
+
 app = Flask(__name__)
+
+# Read the private key
+with open(PRIV_KEY_PATH, 'r') as file:
+    private_key = file.read()
+
+def generate_jwt_token():
+    payload = {
+        'iat': datetime.datetime.now(datetime.UTC),
+        'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=10),
+        'iss': APP_ID
+    }
+    jwt_token = jwt.encode(payload, private_key, algorithm='RS256')
+    return jwt_token
+def get_installation_id():
+    jwt_token = generate_jwt_token()
+    headers = {
+        'Authorization': f'Bearer {jwt_token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    url = 'https://api.github.com/app/installations'
+    response = requests.get(url, headers=headers)
+    installations = response.json()
+    if installations:
+        installation_id = installations[0]['id']
+        return installation_id
+    else:
+        return None
+
+def get_installation_access_token(installation_id):
+    jwt_token = generate_jwt_token()
+    headers = {
+        'Authorization': f'Bearer {jwt_token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    url = f'https://api.github.com/app/installations/{installation_id}/access_tokens'
+    response = requests.post(url, headers=headers)
+    access_token = response.json()['token']
+    return access_token
 
 @app.route('/webhook', methods=['POST'])
 def handle_webhook():
@@ -17,35 +62,40 @@ def handle_webhook():
      
 
         if action == 'opened' and 'pull_request' in data:
-            # Handle pull request opened event
-            repository_name = data['repository']['name']
-            pull_request_number = data['pull_request']['number']
-            pull_request_title = data['pull_request']['title']
-            pull_request_body = data['pull_request']['body']
-            pull_request_url = data['pull_request']['url']
-            # Extract the repository name
-            #print(f"Pull request opened for repository: {repository_name}")
-            # Extract the repository number
-            #print(f"Pull request number: {pull_request_number}")
-            # Extract the repository title
-            #print(f"Pull request title: {pull_request_title}")
-            # Extract the pull request body
-            print(f"Pull request body:")
-            print(pull_request_body)
-            # Extract the pull request url
-            #print(f"Pull request URL: {pull_request_url}")
-            
-            # Extract the changed files
-            changed_files = data['pull_request']['changed_files']
-            print(f"Number of changed files: {changed_files}")
-            # Extract the commits
-            commits_url = data['pull_request']['commits_url']
-            # Additional API request to retrieve the commits data
-            # using the `commits_url` if needed
-            print(commits_url)
-            result = get_pull_request(pull_request_url, ACCESS_TOKEN)
-            print(result)
-            return jsonify({'status': 'success'}), 200       
+             installation_id = get_installation_id()
+             if installation_id:
+                access_token = get_installation_access_token(installation_id)
+                # Handle pull request opened event
+                repository_name = data['repository']['name']
+                pull_request_number = data['pull_request']['number']
+                pull_request_title = data['pull_request']['title']
+                pull_request_body = data['pull_request']['body']
+                pull_request_url = data['pull_request']['url']
+                # Extract the repository name
+                #print(f"Pull request opened for repository: {repository_name}")
+                # Extract the repository number
+                #print(f"Pull request number: {pull_request_number}")
+                # Extract the repository title
+                #print(f"Pull request title: {pull_request_title}")
+                # Extract the pull request body
+                print(f"Pull request body:")
+                print(pull_request_body)
+                # Extract the pull request url
+                #print(f"Pull request URL: {pull_request_url}")
+                
+                # Extract the changed files
+                changed_files = data['pull_request']['changed_files']
+                print(f"Number of changed files: {changed_files}")
+                # Extract the commits
+                commits_url = data['pull_request']['commits_url']
+                # Additional API request to retrieve the commits data
+                # using the `commits_url` if needed
+                print(commits_url)
+                result = get_pull_request(pull_request_url, access_token)
+                print(result)
+             else:
+                print('No installations found for the app.')
+             return jsonify({'status': 'success'}), 200       
         
         else:
             return jsonify({'status': 'error', 'message': 'Unsupported action or missing data'}), 400

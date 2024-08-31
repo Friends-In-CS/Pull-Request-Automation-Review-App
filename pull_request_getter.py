@@ -8,8 +8,9 @@ def get_pull_request(pull_url:str, access_token:str, ):
     """
     # Set up authentication
     headers = {
-        'Authorization': f'Bearer {access_token}'
-    }
+                'Authorization': f'Bearer {access_token}',
+                'Accept': 'application/vnd.github.v3+json'
+            }
     # Get the pull request details
 
     response = requests.get(pull_url, headers=headers)
