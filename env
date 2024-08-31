@@ -1,0 +1,4 @@
+APP_ID="984766"
+WEBHOOK_SECRET="YOUR_WEBHOOK_SECRET"
+PRIVATE_KEY_PATH="Pull-Request-Automation-Review-App\privatekey.pem"
+GITHUB_INSTALLATION_ID=""
