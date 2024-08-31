@@ -4,8 +4,9 @@ import requests
 import jwt
 from flask import Flask, request, jsonify
 from pull_request_getter import get_pull_request
-APP_ID = os.environ.get('APP_ID')
-PRIV_KEY_PATH = os.environ.get('PRIVATE_KEY_PATH')
+from pathlib import Path
+APP_ID = 984766
+PRIV_KEY_PATH = Path("privatekey.pem")
 #INSTALLATION_ID = os.environ.get('GITHUB_INSTALLATION_ID')
 
 app = Flask(__name__)
