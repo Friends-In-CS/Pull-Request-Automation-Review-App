@@ -13,23 +13,9 @@ def handle_webhook():
         
         # Safely access 'action' and other keys
         action = data.get('action', None)
+     
 
-        if action == 'created':
-            # Handle repository creation event
-            repository_name = data.get('repository', {}).get('name', 'Unknown')
-            print(f"New repository created: {repository_name}")
-            # Add your custom logic here
-            return jsonify({'status': 'success', 'message': 'Repository creation handled'}), 200
-
-        elif action == 'push':
-            # Handle push event
-            repository_name = data.get('repository', {}).get('name', 'Unknown')
-            branch = data.get('ref', '').split('/')[-1]
-            print(f"Push event received for repository: {repository_name}, branch: {branch}")
-            # Add your custom logic here
-            return jsonify({'status': 'success', 'message': 'Push event handled'}), 200
-
-        elif action == 'opened' and 'pull_request' in data:
+        if action == 'opened' and 'pull_request' in data:
             # Handle pull request opened event
             repository_name = data['repository']['name']
             pull_request_number = data['pull_request']['number']
@@ -63,18 +49,20 @@ def handle_webhook():
             print(commits_url)
             print()
             return jsonify({'status': 'success'}), 200       
+        
+        else:
+            return jsonify({'status': 'error', 'message': 'Unsupported action or missing data'}), 400
 
-        elif action == 'closed' and 'pull_request' in data:
+        '''elif action == 'closed' and 'pull_request' in data:
             # Handle pull request closed event
             repository_name = data.get('repository', {}).get('name', 'Unknown')
             pull_request_number = data['pull_request'].get('number', 'Unknown')
             print(f"Pull request closed for repository: {repository_name}")
             print(f"Pull request number: {pull_request_number}")
             # Add your custom logic here
-            return jsonify({'status': 'success', 'message': 'Pull request closed handled'}), 200
+            return jsonify({'status': 'success', 'message': 'Pull request closed handled'}), 200'''
 
-        else:
-            return jsonify({'status': 'error', 'message': 'Unsupported action or missing data'}), 400
+        
 
     return jsonify({'status': 'error', 'message': 'Invalid request method'}), 405
 
