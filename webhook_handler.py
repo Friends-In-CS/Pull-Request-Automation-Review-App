@@ -29,7 +29,7 @@ def handle_webhook():
             # Add your custom logic here
             return jsonify({'status': 'success', 'message': 'Push event handled'}), 200
 
-        elif data['action'] == 'opened' and 'pull_request' in data:
+        elif action == 'opened' and 'pull_request' in data:
             # Handle pull request opened event
             repository_name = data['repository']['name']
             pull_request_number = data['pull_request']['number']
